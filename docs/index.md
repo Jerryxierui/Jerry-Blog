@@ -18,29 +18,71 @@ hero:
       link: https://github.com/Jerryxierui/Jerry-Blog
 
 features:
-  - icon: 🖥️
-    title: 前端基础
-    details: HTML, CSS, JavaScript, TypeScript, ES6+等相关知识
-    linkText: 前端基础
+  - icon: 🎨
+    title: 前端核心
+    details: HTML5, CSS3/Sass/Less, JavaScript(ES6+), TypeScript
+    linkText: 前端核心
+
   - icon: 🧩
-    title: 框架与库
-    details: Vue, React, jQuery, Bootstrap, Lodash, Moment.js, Axios, ECharts, Three.js, D3.js, Mars3D等
-    linkText: 框架与库
-  - icon: ⚙️
-    title: 工具与技术
-    details: Webpack, Babel, Git, npm, yarn, Docker, Linux, 网络安全, 算法与数据结构等
-    linkText: 工具与技术
-  - icon: 🌐
-    title: 后端知识
-    details: Node.js, Express, MongoDB, MySQL, Redis, Socket.io, WebSocket等
-    linkText: 后端知识
+    title: 框架与生态
+    details:
+      - 框架：Vue/React/Angular/Svelte
+      - 工具链：Vite/Webpack/Rollup
+      - 状态管理：Pinia/Redux/Vuex
+      - 可视化：ECharts/D3.js/Three.js/Mars3D
+    linkText: 框架与生态
+
+  - icon: ⚒️
+    title: 开发工具链
+    details:
+      - 包管理：npm/yarn/pnpm
+      - 构建工具：Webpack/Vite/Babel
+      - 版本控制：Git/GitHub/GitLab
+      - 测试工具：Jest/Cypress/Playwright
+    linkText: 开发工具链
+
+  - icon: 📱
+    title: 跨端开发
+    details:
+      - 小程序：原生/Taro/Uniapp
+      - 移动端：React Native/Flutter
+      - 桌面端：Electron/Tauri
+    linkText: 跨端开发
+
+  - icon: 🗄️
+    title: 服务端技术
+    details:
+      - 运行时：Node.js/Deno/Bun
+      - 框架：Express/NestJS/Koa
+      - 数据库：MongoDB/MySQL/Redis/ORM
+      - 通信协议：RESTful/GraphQL/WebSocket
+    linkText: 服务端技术
+
   - icon: 🚀
-    title: 工程化与部署
-    details: CI/CD, Docker, Kubernetes, Nginx, Apache等
-    linkText: 工程化与部署
-  - icon: 📚
-    title: 其他
-    details: 操作系统, 网络协议, 设计模式, 性能优化, 安全防护等
-    linkText: 其他
+    title: DevOps & 部署
+    details:
+      - 容器化：Docker/Kubernetes
+      - CI/CD：GitHub Actions/Jenkins
+      - 云服务：AWS/Aliyun/Vercel
+      - 服务器：Nginx/Apache/Linux
+    linkText: DevOps
+
+  - icon: 🧠
+    title: 计算机基础
+    details:
+      - 操作系统原理
+      - 网络协议（HTTP/HTTPS/TCP）
+      - 算法与数据结构
+      - 设计模式
+    linkText: 计算机基础
+
+  - icon: 🔒
+    title: 安全与优化
+    details:
+      - 网络安全：XSS/CSRF/CSP
+      - 性能优化：Lighthouse/Web Vitals
+      - 代码规范：ESLint/Prettier
+      - 质量监控：Sentry/Perfume.js
+    linkText: 安全优化
 ---
 
