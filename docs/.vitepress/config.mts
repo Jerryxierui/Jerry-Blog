@@ -6,6 +6,8 @@ export default defineConfig({
   description: "锐🐶的博客",
   lastUpdated: true,
   cleanUrls: true,
+  //启用深色模式
+  appearance: "dark",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     i18nRouting: false,
@@ -13,112 +15,114 @@ export default defineConfig({
     logo: '/logo.png',
 
     nav: [
-      { text: '🎨 前端核心', link: '/frontend-core' },
-      { text: '🧩 框架与生态', link: '/framework-ecosystem' },
-      { text: '⚒️ 开发工具链', link: '/dev-toolchain' },
-      { text: '📱 跨端开发', link: '/cross-platform' },
-      { text: '🗄️ 服务端技术', link: '/server-tech' },
-      { text: '🚀 DevOps', link: '/devops' },
-      { text: '🧠 计算机基础', link: '/cs-fundamentals' },
-      { text: '🔒 安全优化', link: '/security-optimization' }
-    ],
-
-    sidebar: {
-      '/frontend-core': [{
+      {
         text: '🎨 前端核心',
         items: [
-          { text: '📄 HTML5', link: '/frontend-core/html' },
-          { text: 'CSS3/Sass/Less', link: '/frontend-core/css' },
-          { text: 'JavaScript(ES6+)', link: '/frontend-core/javascript' },
-          { text: 'TypeScript', link: '/frontend-core/typescript' },
-          { text: 'Web API', link: '/frontend-core/webapi' }
+          { text: 'HTML',link: '/FrontendCore/HTML/'},
+          { text: 'CSS',link: '/FrontendCore/CSS/'},
+          { text: 'JavaScript',link: '/docs/FrontendCore/JavaScript/index.md'},
+          { text: 'TypeScript',link: '/docs/FrontendCore/TypeScript/index.md'},
+          { text: 'ES6+',link: '/docs/FrontendCore/ES6+/index.md'}
         ]
-      }],
-
-      '/framework-ecosystem': [{
+      },
+      {
         text: '🧩 框架与生态',
         items: [
-          { text: '🖖 Vue', link: '/framework-ecosystem/vue' },
-          { text: 'React', link: '/framework-ecosystem/react' },
-          { text: 'Vite/Webpack/Rollup', link: '/framework-ecosystem/toolchain' },
-          { text: '状态管理', link: '/framework-ecosystem/state-management' },
-          { text: '数据可视化', link: '/framework-ecosystem/visualization' }
+          { text: 'Vue',link: '/docs/FrameworkAndEcosystem/Vue/index.md'},
+          { text: 'React',link: '/docs/FrameworkAndEcosystem/React/index.md'},
+          { text: 'Vite',link: '/docs/FrameworkAndEcosystem/Vite/index.md'},
+          { text: 'Webpack',link: '/docs/FrameworkAndEcosystem/Webpack/index.md'},
+          { text: 'Rollup',link: '/docs/FrameworkAndEcosystem/Rollup/index.md'},
+          { text: 'Pinia',link: '/docs/FrameworkAndEcosystem/Pinia/index.md'},
+          { text: 'Vuex',link: '/docs/FrameworkAndEcosystem/Vuex/index.md'},
+          { text: 'Redux',link: '/docs/FrameworkAndEcosystem/Redux/index.md'},
+          { text: 'Vue Router',link: '/docs/FrameworkAndEcosystem/VueRouter/index.md'},
+          { text: 'React Router',link: '/docs/FrameworkAndEcosystem/ReactRouter/index.md'},
+          { text: 'Axios',link: '/docs/FrameworkAndEcosystem/Axios/index.md'},
+          { text: 'Echarts',link: '/docs/FrameworkAndEcosystem/Echarts/index.md'},
+          { text: 'D3',link: '/docs/FrameworkAndEcosystem/D3/index.md'},
+          { text: 'Three.js',link: '/docs/FrameworkAndEcosystem/Three.js/index.md'},
+          { text: 'Mars3d',link: '/docs/FrameworkAndEcosystem/Mars3d/index.md'},
+          { text: 'Axios',link: '/docs/FrameworkAndEcosystem/Axios/index.md'},
+          { text: 'Cesium',link: '/docs/FrameworkAndEcosystem/Cesium/index.md'},
+          { text: 'Mars3D',link: '/docs/FrameworkAndEcosystem/Mars3d/index.md'}
         ]
-      }],
-
-      '/dev-toolchain': [{
+      },
+      {
         text: '⚒️ 开发工具链',
         items: [
-          { text: '📦 包管理器', link: '/dev-toolchain/package-manager' },
-          { text: '构建工具', link: '/dev-toolchain/build-tools' },
-          { text: '版本控制', link: '/dev-toolchain/version-control' },
-          { text: '测试工具', link: '/dev-toolchain/testing-tools' }
+          { text: '包管理', link: '/docs/DevToolsChain/PackageManagers/index.md' },
+          { text: '构建工具', link: '/docs/DevToolsChain/BuildTools/index.md' },
+          { text: '版本控制', link: '/docs/DevToolsChain/VersionControl/index.md' },
+          { text: '测试工具', link: '/docs/DevToolsChain/TestingTools/index.md' }
         ]
-      }],
-
-      '/cross-platform': [{
-        text: '跨端开发',
+      },
+      {
+        text: '📱 跨端开发',
         items: [
-          { text: '小程序开发', link: '/cross-platform/miniprogram' },
-          { text: '移动端开发', link: '/cross-platform/mobile' },
-          { text: '桌面端开发', link: '/cross-platform/desktop' }
+          { text: '小程序', link: '/docs/CrossPlatform/MiniProgram/index.md' },
+          { text: '移动端', link: '/docs/CrossPlatform/Mobile/index.md' },
+          { text: '桌面端', link: '/docs/CrossPlatform/Desktop/index.md' }
         ]
-      }],
-
-      '/server-tech': [{
-        text: '服务端技术',
+      },
+      {
+        text: '🗄️ 服务端技术',
         items: [
-          { text: '运行时', link: '/server-tech/runtime' },
-          { text: '服务端框架', link: '/server-tech/frameworks' },
-          { text: '数据库', link: '/server-tech/database' },
-          { text: '通信协议', link: '/server-tech/protocols' }
+          { text: '运行时', link: '/docs/ServerTech/Runtime/index.md' },
+          { text: '框架', link: '/docs/ServerTech/Frameworks/index.md' },
+          { text: '数据库', link: '/docs/ServerTech/Databases/index.md' },
+          { text: '通信协议', link: '/docs/ServerTech/Protocols/index.md' }
         ]
-      }],
-
-      '/devops': [{
-        text: 'DevOps',
+      },
+      {
+        text: '🚀 DevOps',
         items: [
-          { text: '容器化', link: '/devops/containerization' },
-          { text: 'CI/CD', link: '/devops/cicd' },
-          { text: '云服务', link: '/devops/cloud' },
-          { text: '服务器', link: '/devops/servers' }
+          { text: '容器化', link: '/docs/DevOps/Containerization/index.md' },
+          { text: 'CI/CD', link: '/docs/DevOps/CI_CD/index.md' },
+          { text: '云服务', link: '/docs/DevOps/CloudServices/index.md' },
+          { text: '服务器', link: '/docs/DevOps/Servers/index.md' }
         ]
-      }],
-
-      '/cs-fundamentals': [{
-        text: '计算机基础',
+      },
+      {
+        text: '🧠 计算机基础',
         items: [
-          { text: '操作系统', link: '/cs-fundamentals/os' },
-          { text: '网络协议', link: '/cs-fundamentals/network' },
-          { text: '算法结构', link: '/cs-fundamentals/algorithms' },
-          { text: '设计模式', link: '/cs-fundamentals/design-patterns' }
+          { text: '操作系统', link: '/docs/CSFundamentals/OS/index.md' },
+          { text: '网络协议', link: '/docs/CSFundamentals/Network/index.md' },
+          { text: '算法结构', link: '/docs/CSFundamentals/Algorithms/index.md' },
+          { text: '设计模式', link: '/docs/CSFundamentals/DesignPatterns/index.md' }
         ]
-      }],
-
-      '/security-optimization': [{
+      },
+      {
         text: '🔒 安全优化',
         items: [
-          { text: '🛡️ 网络安全', link: '/security-optimization/security' },
-          { text: '性能优化', link: '/security-optimization/performance' },
-          { text: '代码规范', link: '/security-optimization/code-style' },
-          { text: '质量监控', link: '/security-optimization/monitoring' }
+          { text: '网络安全', link: '/docs/SecurityOptimization/NetworkSecurity/index.md' },
+          { text: '性能优化', link: '/docs/SecurityOptimization/Performance/index.md' },
+          { text: '代码规范', link: '/docs/SecurityOptimization/CodeStyle/index.md' },
+          { text: '质量监控', link: '/docs/SecurityOptimization/Monitoring/index.md' }
         ]
-      }]
-    },
+      }
+    ],
+
+    sidebar: {},
 
     /* 右侧大纲配置 */
     outline: {
-      level: 'deep',
+      level: [2, 6],
       label: '目录',
     },
-
+    // 社交链接
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Jerryxierui/Jerry-Blog' }
     ],
+    // 编辑链接
     editLink: {
       pattern: 'https://github.com/Jerryxierui/Jerry-Blog/edit/main/docs/:path',
       text: '在 GitHub 上编辑此页'
     },
+    returnToTopLabel: "返回顶部",
+    // 主题
+    darkModeSwitchLabel: "深浅模式",
+    // 搜索
     search: {
       provider: 'local',
       options: {

@@ -12,7 +12,7 @@ hero:
   actions:
     - theme: brand
       text: 开始阅读
-      link: /
+      link: /FrontendCore/HTML/
     - theme: alt
       text: github
       link: https://github.com/Jerryxierui/Jerry-Blog
@@ -20,13 +20,13 @@ hero:
 features:
   - icon: 🎨
     title: 前端核心
-    details: HTML5, CSS3/Sass/Less, JavaScript(ES6+), TypeScript
+    details: HTML, CSS, JavaScript, TypeScript, ES6+
     linkText: 前端核心
 
   - icon: 🧩
     title: 框架与生态
     details:
-      - 框架：Vue/React/Angular/Svelte
+      - 框架：Vue/React
       - 工具链：Vite/Webpack/Rollup
       - 状态管理：Pinia/Redux/Vuex
       - 可视化：ECharts/D3.js/Three.js/Mars3D
@@ -86,3 +86,4 @@ features:
     linkText: 安全优化
 ---
 
+<Confetti />

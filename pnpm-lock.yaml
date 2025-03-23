@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      canvas-confetti:
+        specifier: ^1.9.3
+        version: 1.9.3
+      vue:
+        specifier: '3'
+        version: 3.5.13
     devDependencies:
       '@giscus/vue':
         specifier: ^3.1.1
@@ -537,6 +544,9 @@ packages:
 
   birpc@0.2.19:
     resolution: {integrity: sha512-5WeXXAvTmitV1RqJFppT5QtUiz2p1mRSYU000Jkft5ZUCLJIk4uQriYNO50HknxKwM6jd8utNc66K1qGIwwWBQ==}
+
+  canvas-confetti@1.9.3:
+    resolution: {integrity: sha512-rFfTURMvmVEX1gyXFgn5QMn81bYk70qa0HLzcIOSVEyl57n6o9ItHeBtUSWdvKAPY0xlvBHno4/v3QPrT83q9g==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -1268,6 +1278,8 @@ snapshots:
       '@algolia/requester-node-http': 5.21.0
 
   birpc@0.2.19: {}
+
+  canvas-confetti@1.9.3: {}
 
   ccount@2.0.1: {}
 
