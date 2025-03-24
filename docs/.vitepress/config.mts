@@ -20,8 +20,8 @@ export default defineConfig({
         items: [
           { text: 'HTML',link: '/FrontendCore/HTML/'},
           { text: 'CSS',link: '/FrontendCore/CSS/'},
-          { text: 'JavaScript',link: '/docs/FrontendCore/JavaScript/index.md'},
-          { text: 'TypeScript',link: '/docs/FrontendCore/TypeScript/index.md'},
+          { text: 'JavaScript',link: '/FrontendCore/JavaScript'},
+          { text: 'TypeScript',link: '/FrontendCore/TypeScript/'},
           { text: 'ES6+',link: '/docs/FrontendCore/ES6+/index.md'}
         ]
       },
@@ -103,7 +103,38 @@ export default defineConfig({
       }
     ],
 
-    sidebar: {},
+    sidebar: {
+      '/FrontendCore/': [
+        {
+          text: 'HTML',
+          link: '/FrontendCore/HTML/',
+          items: [
+            { text: 'HTML 基础概念', link: '/FrontendCore/HTML/#html-基础概念' }
+          ]
+        },
+        {
+          text: 'CSS',
+          link: '/FrontendCore/CSS/',
+          items: [
+            { text: 'CSS 基础概念', link: '/FrontendCore/CSS/#css-基础概念' }
+          ]
+        },
+        {
+          text: 'JavaScript',
+          link: '/FrontendCore/JavaScript/',
+          items: [
+            { text: 'JavaScript 基础概念', link: '/FrontendCore/JavaScript/#javascript-基础概念' }
+          ]
+        },
+        {
+          text: 'TypeScript',
+          link: '/FrontendCore/TypeScript/',
+          items: [
+            { text: 'TypeScript 基础概念', link: '/FrontendCore/TypeScript/#typescript-基础概念' }
+          ]
+        }
+      ]
+    },
 
     /* 右侧大纲配置 */
     outline: {

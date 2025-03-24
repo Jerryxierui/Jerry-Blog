@@ -191,6 +191,91 @@ a[href$=".pdf"] { color: red; }
 
 ## CSS 布局技术
 
+## CSS工程化
+
+### PostCSS配置示例
+```bash
+# 安装必要依赖
+npm install postcss postcss-preset-env autoprefixer --save-dev
+```
+
+```js
+// postcss.config.js
+module.exports = {
+  plugins: [
+    require('postcss-preset-env')({
+      stage: 3,
+      features: {
+        'nesting-rules': true
+      }
+    }),
+    require('autoprefixer')({
+      overrideBrowserslist: ['last 2 versions']
+    })
+  ]
+}
+```
+
+### BEM命名规范
+```css
+/* Block组件 */
+.search-form {
+  &__input { /* Element */
+    &--disabled { /* Modifier */
+      opacity: 0.5;
+    }
+  }
+}
+```
+
+**工程化最佳实践**:
+- 使用PostCSS自动处理浏览器前缀
+- 通过BEM实现可维护的CSS结构
+- 结合CSS Modules避免样式冲突
+
+## 响应式设计实践
+
+```css
+/* 移动优先的媒体查询 */
+.container {
+  padding: 1rem;
+  width: 100vw; /* 视口单位 */
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* 容器查询示例 */
+.card {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card-content {
+    display: flex;
+    gap: 1.5rem;
+  }
+}
+
+/* 视口单位组合应用 */
+.hero-section {
+  font-size: clamp(1.25rem, 2vw + 0.5rem, 2rem);
+  min-height: calc(100vh - 80px);
+}
+```
+
+**最佳实践**:
+- 优先使用移动优先的媒体查询
+- 容器查询适用于组件级响应式
+- 视口单位(vw/vh)结合clamp()实现弹性排版
+
+## CSS 布局技术
+
 ### 浮动布局
 
 ```css
@@ -215,10 +300,119 @@ a[href$=".pdf"] { color: red; }
 浮动元素会脱离正常文档流，可能导致父元素高度塌陷。使用 `clearfix` 技术可以解决这个问题。
 :::
 
+## CSS 布局技术
+
+## CSS工程化
+
+### PostCSS配置示例
+```bash
+# 安装必要依赖
+npm install postcss postcss-preset-env autoprefixer --save-dev
+```
+
+```js
+// postcss.config.js
+module.exports = {
+  plugins: [
+    require('postcss-preset-env')({
+      stage: 3,
+      features: {
+        'nesting-rules': true
+      }
+    }),
+    require('autoprefixer')({
+      overrideBrowserslist: ['last 2 versions']
+    })
+  ]
+}
+```
+
+### BEM命名规范
+```css
+/* Block组件 */
+.search-form {
+  &__input { /* Element */
+    &--disabled { /* Modifier */
+      opacity: 0.5;
+    }
+  }
+}
+```
+
+**工程化最佳实践**:
+- 使用PostCSS自动处理浏览器前缀
+- 通过BEM实现可维护的CSS结构
+- 结合CSS Modules避免样式冲突
+
+## 响应式设计实践
+
+```css
+/* 移动优先的媒体查询 */
+.container {
+  padding: 1rem;
+  width: 100vw; /* 视口单位 */
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* 容器查询示例 */
+.card {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card-content {
+    display: flex;
+    gap: 1.5rem;
+  }
+}
+
+/* 视口单位组合应用 */
+.hero-section {
+  font-size: clamp(1.25rem, 2vw + 0.5rem, 2rem);
+  min-height: calc(100vh - 80px);
+}
+```
+
+**最佳实践**:
+- 优先使用移动优先的媒体查询
+- 容器查询适用于组件级响应式
+- 视口单位(vw/vh)结合clamp()实现弹性排版
+
+## CSS 布局技术
+
+### Flexbox vs Grid 适用场景
+
+```css
+/* Flexbox 典型场景 */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* 水平分布 */
+  align-items: center; /* 垂直居中 */
+}
+
+/* Grid 典型场景 */
+.dashboard {
+  display: grid;
+  grid-template-columns: 200px 1fr; /* 固定+自适应布局 */
+  grid-template-areas: "sidebar main";
+  gap: 20px;
+}
+```
+
+**决策指南**:
+- 选择 Flexbox：当需要单项维度（行/列）布局、内容动态伸缩、对齐控制
+- 选择 Grid：当需要二维布局、精确网格控制、复杂嵌套结构
+
 ### Flexbox 布局
 
-Flexbox 是一维布局模型，适用于一行或一列的布局。
-
+Flexbox 是一维布局模型...
 ```css
 .container {
   display: flex;
@@ -1670,4 +1864,43 @@ body {
   flex-wrap: wrap;
 }
 
-.flex
+## 技术选型决策树
+
+```mermaid
+graph TD
+  A[需要布局？] -->|是| B{布局维度}
+  B -->|一维| C[Flexbox]
+  B -->|二维| D[Grid]
+  A -->|否| E[使用常规文档流]
+  C --> F{内容动态？}
+  F -->|是| G[Flexbox+内容伸缩]
+  F -->|否| H[Grid+固定轨道]
+```
+
+## 浏览器兼容性指南
+
+### 特性检测
+```css
+@supports (display: grid) {
+  .container { display: grid; }
+}
+@supports not (display: grid) {
+  .container { display: flex; }
+}
+```
+
+### Polyfill策略
+```bash
+# 安装Grid polyfill
+npm install css-grid-polyfill --save-dev
+```
+
+**兼容方案优先级**:
+1. 渐进增强（Modernizr检测）
+2. 条件加载polyfill
+3. 优雅降级样式方案
+
+**推荐工具**:
+- Autoprefixer
+- PostCSS Preset Env
+- Modernizr
