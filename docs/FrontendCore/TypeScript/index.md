@@ -1582,15 +1582,642 @@ function updateUser(id: number, user: Partial<User>) {
 }
 ```
 
+## 高级类型技巧
+
+### 模板字面量类型
+
+```typescript
+// 模板字面量类型
+type EventName<T extends string> = `on${Capitalize<T>}`;
+type ClickEvent = EventName<'click'>; // 'onClick'
+type HoverEvent = EventName<'hover'>; // 'onHover'
+
+// 路径类型
+type Path = 'user' | 'admin' | 'guest';
+type ApiPath<T extends string> = `/api/${T}`;
+type UserApiPath = ApiPath<Path>; // '/api/user' | '/api/admin' | '/api/guest'
+
+// 字符串操作类型
+type SnakeCase<S extends string> = S extends `${infer T}${infer U}`
+  ? `${T extends Capitalize<T> ? '_' : ''}${Lowercase<T>}${SnakeCase<U>}`
+  : S;
+
+type Example = SnakeCase<'HelloWorld'>; // 'hello_world'
+
+// CSS 属性类型
+type CSSProperty = 
+  | `margin-${'top' | 'right' | 'bottom' | 'left'}`
+  | `padding-${'top' | 'right' | 'bottom' | 'left'}`
+  | 'display'
+  | 'position';
+
+const styles: Record<CSSProperty, string> = {
+  'margin-top': '10px',
+  'margin-right': '20px',
+  'margin-bottom': '10px',
+  'margin-left': '20px',
+  'padding-top': '5px',
+  'padding-right': '15px',
+  'padding-bottom': '5px',
+  'padding-left': '15px',
+  display: 'block',
+  position: 'relative'
+};
+```
+
+### 递归类型和深度操作
+
+```typescript
+// 深度只读
+type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
+};
+
+interface User {
+  name: string;
+  profile: {
+    age: number;
+    address: {
+      city: string;
+      country: string;
+    };
+  };
+}
+
+type ReadonlyUser = DeepReadonly<User>;
+// 所有属性都变为只读，包括嵌套对象
+
+// 深度可选
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+type PartialUser = DeepPartial<User>;
+// 所有属性都变为可选，包括嵌套对象
+
+// 路径类型
+type PathsToStringProps<T> = T extends string
+  ? []
+  : {
+      [K in Extract<keyof T, string>]: T[K] extends string
+        ? [K]
+        : [K, ...PathsToStringProps<T[K]>];
+    }[Extract<keyof T, string>];
+
+type UserPaths = PathsToStringProps<User>; // ['name'] | ['profile', 'address', 'city'] | ['profile', 'address', 'country']
+
+// 根据路径获取类型
+type GetByPath<T, P extends readonly (string | number)[]> = P extends readonly [infer K, ...infer Rest]
+  ? K extends keyof T
+    ? Rest extends readonly (string | number)[]
+      ? GetByPath<T[K], Rest>
+      : never
+    : never
+  : T;
+
+type CityType = GetByPath<User, ['profile', 'address', 'city']>; // string
+```
+
+### 高级条件类型
+
+```typescript
+// 函数重载类型
+type Overload = {
+  (x: string): string;
+  (x: number): number;
+  (x: boolean): boolean;
+};
+
+// 提取函数参数类型
+type ExtractParameters<T> = T extends (...args: infer P) => any ? P : never;
+type OverloadParams = ExtractParameters<Overload>; // [string] | [number] | [boolean]
+
+// 提取 Promise 类型
+type Awaited<T> = T extends Promise<infer U> ? Awaited<U> : T;
+type PromiseValue = Awaited<Promise<Promise<string>>>; // string
+
+// 数组扁平化类型
+type Flatten<T> = T extends readonly (infer U)[]
+  ? U extends readonly any[]
+    ? Flatten<U>
+    : U
+  : T;
+
+type FlatArray = Flatten<[1, [2, [3, 4]], 5]>; // 1 | 2 | 3 | 4 | 5
+
+// 联合类型转交叉类型
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+
+type Union = { a: string } | { b: number };
+type Intersection = UnionToIntersection<Union>; // { a: string } & { b: number }
+```
+
+### 类型编程实用工具
+
+```typescript
+// 类型安全的事件发射器
+interface EventMap {
+  click: { x: number; y: number };
+  hover: { element: HTMLElement };
+  keypress: { key: string; ctrlKey: boolean };
+}
+
+class TypedEventEmitter<T extends Record<string, any>> {
+  private listeners: {
+    [K in keyof T]?: Array<(data: T[K]) => void>;
+  } = {};
+
+  on<K extends keyof T>(event: K, listener: (data: T[K]) => void): void {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event]!.push(listener);
+  }
+
+  emit<K extends keyof T>(event: K, data: T[K]): void {
+    const eventListeners = this.listeners[event];
+    if (eventListeners) {
+      eventListeners.forEach(listener => listener(data));
+    }
+  }
+}
+
+const emitter = new TypedEventEmitter<EventMap>();
+emitter.on('click', (data) => {
+  console.log(`Clicked at ${data.x}, ${data.y}`);
+});
+
+// 类型安全的状态管理
+interface AppState {
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  settings: {
+    theme: 'light' | 'dark';
+    language: string;
+  };
+}
+
+type StateUpdater<T> = {
+  [K in keyof T]: (value: T[K]) => void;
+};
+
+class TypedStore<T extends Record<string, any>> {
+  private state: T;
+  private updaters: StateUpdater<T>;
+
+  constructor(initialState: T) {
+    this.state = { ...initialState };
+    this.updaters = {} as StateUpdater<T>;
+    
+    // 为每个状态属性创建更新器
+    Object.keys(initialState).forEach(key => {
+      this.updaters[key as keyof T] = (value: T[keyof T]) => {
+        this.state[key as keyof T] = value;
+      };
+    });
+  }
+
+  getState(): Readonly<T> {
+    return { ...this.state };
+  }
+
+  getUpdaters(): StateUpdater<T> {
+    return this.updaters;
+  }
+}
+
+const store = new TypedStore<AppState>({
+  user: { id: 1, name: 'Jerry', email: 'jerry@example.com' },
+  settings: { theme: 'light', language: 'en' }
+});
+
+const updaters = store.getUpdaters();
+updaters.user({ id: 2, name: 'Alice', email: 'alice@example.com' });
+```
+
+## 装饰器进阶
+
+### 方法装饰器
+
+```typescript
+// 性能监控装饰器
+function performance(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  
+  descriptor.value = function (...args: any[]) {
+    const start = performance.now();
+    const result = originalMethod.apply(this, args);
+    const end = performance.now();
+    console.log(`${propertyKey} 执行时间: ${end - start}ms`);
+    return result;
+  };
+  
+  return descriptor;
+}
+
+// 缓存装饰器
+function cache(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  const cacheMap = new Map();
+  
+  descriptor.value = function (...args: any[]) {
+    const key = JSON.stringify(args);
+    if (cacheMap.has(key)) {
+      return cacheMap.get(key);
+    }
+    const result = originalMethod.apply(this, args);
+    cacheMap.set(key, result);
+    return result;
+  };
+  
+  return descriptor;
+}
+
+// 重试装饰器
+function retry(maxAttempts: number = 3) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    
+    descriptor.value = async function (...args: any[]) {
+      let lastError: Error;
+      
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          return await originalMethod.apply(this, args);
+        } catch (error) {
+          lastError = error as Error;
+          if (attempt === maxAttempts) {
+            throw lastError;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
+    };
+    
+    return descriptor;
+  };
+}
+
+class ApiService {
+  @performance
+  @cache
+  fetchUser(id: number): Promise<User> {
+    return fetch(`/api/users/${id}`).then(res => res.json());
+  }
+  
+  @retry(3)
+  async uploadFile(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+}
+```
+
+### 类装饰器
+
+```typescript
+// 单例装饰器
+function singleton<T extends new (...args: any[]) => any>(constructor: T) {
+  let instance: InstanceType<T>;
+  
+  return class extends constructor {
+    constructor(...args: any[]) {
+      if (instance) {
+        return instance;
+      }
+      super(...args);
+      instance = this as InstanceType<T>;
+    }
+  } as T;
+}
+
+// 自动绑定装饰器
+function autobind<T extends new (...args: any[]) => any>(constructor: T) {
+  return class extends constructor {
+    constructor(...args: any[]) {
+      super(...args);
+      
+      // 绑定所有方法
+      Object.getOwnPropertyNames(constructor.prototype).forEach(key => {
+        const descriptor = Object.getOwnPropertyDescriptor(constructor.prototype, key);
+        if (descriptor && typeof descriptor.value === 'function' && key !== 'constructor') {
+          (this as any)[key] = (this as any)[key].bind(this);
+        }
+      });
+    }
+  } as T;
+}
+
+@singleton
+@autobind
+class Logger {
+  private logs: string[] = [];
+  
+  log(message: string): void {
+    this.logs.push(`${new Date().toISOString()}: ${message}`);
+    console.log(message);
+  }
+  
+  getLogs(): string[] {
+    return [...this.logs];
+  }
+}
+
+const logger1 = new Logger();
+const logger2 = new Logger();
+console.log(logger1 === logger2); // true (单例)
+
+const logMethod = logger1.log;
+logMethod('Test message'); // 自动绑定，this 指向正确
+```
+
+## 类型安全的设计模式
+
+### 建造者模式
+
+```typescript
+interface UserConfig {
+  name: string;
+  email: string;
+  age?: number;
+  role?: 'admin' | 'user' | 'guest';
+  preferences?: {
+    theme: 'light' | 'dark';
+    notifications: boolean;
+  };
+}
+
+class UserBuilder {
+  private config: Partial<UserConfig> = {};
+  
+  setName(name: string): this {
+    this.config.name = name;
+    return this;
+  }
+  
+  setEmail(email: string): this {
+    this.config.email = email;
+    return this;
+  }
+  
+  setAge(age: number): this {
+    this.config.age = age;
+    return this;
+  }
+  
+  setRole(role: UserConfig['role']): this {
+    this.config.role = role;
+    return this;
+  }
+  
+  setPreferences(preferences: UserConfig['preferences']): this {
+    this.config.preferences = preferences;
+    return this;
+  }
+  
+  build(): UserConfig {
+    if (!this.config.name || !this.config.email) {
+      throw new Error('Name and email are required');
+    }
+    return this.config as UserConfig;
+  }
+}
+
+const user = new UserBuilder()
+  .setName('Jerry')
+  .setEmail('jerry@example.com')
+  .setAge(30)
+  .setRole('admin')
+  .setPreferences({ theme: 'dark', notifications: true })
+  .build();
+```
+
+### 观察者模式
+
+```typescript
+interface Observer<T> {
+  update(data: T): void;
+}
+
+interface Subject<T> {
+  attach(observer: Observer<T>): void;
+  detach(observer: Observer<T>): void;
+  notify(data: T): void;
+}
+
+class TypedSubject<T> implements Subject<T> {
+  private observers: Set<Observer<T>> = new Set();
+  
+  attach(observer: Observer<T>): void {
+    this.observers.add(observer);
+  }
+  
+  detach(observer: Observer<T>): void {
+    this.observers.delete(observer);
+  }
+  
+  notify(data: T): void {
+    this.observers.forEach(observer => observer.update(data));
+  }
+}
+
+interface StockPrice {
+  symbol: string;
+  price: number;
+  timestamp: Date;
+}
+
+class StockPriceSubject extends TypedSubject<StockPrice> {
+  private currentPrice: StockPrice | null = null;
+  
+  setPrice(price: StockPrice): void {
+    this.currentPrice = price;
+    this.notify(price);
+  }
+  
+  getCurrentPrice(): StockPrice | null {
+    return this.currentPrice;
+  }
+}
+
+class StockDisplay implements Observer<StockPrice> {
+  constructor(private name: string) {}
+  
+  update(data: StockPrice): void {
+    console.log(`${this.name}: ${data.symbol} - $${data.price}`);
+  }
+}
+
+const stockSubject = new StockPriceSubject();
+const display1 = new StockDisplay('Display 1');
+const display2 = new StockDisplay('Display 2');
+
+stockSubject.attach(display1);
+stockSubject.attach(display2);
+
+stockSubject.setPrice({
+  symbol: 'AAPL',
+  price: 150.25,
+  timestamp: new Date()
+});
+```
+
+### 策略模式
+
+```typescript
+interface PaymentStrategy {
+  pay(amount: number): Promise<boolean>;
+}
+
+class CreditCardPayment implements PaymentStrategy {
+  constructor(private cardNumber: string, private cvv: string) {}
+  
+  async pay(amount: number): Promise<boolean> {
+    console.log(`Processing credit card payment of $${amount}`);
+    // 模拟支付处理
+    return new Promise(resolve => {
+      setTimeout(() => resolve(true), 1000);
+    });
+  }
+}
+
+class PayPalPayment implements PaymentStrategy {
+  constructor(private email: string) {}
+  
+  async pay(amount: number): Promise<boolean> {
+    console.log(`Processing PayPal payment of $${amount}`);
+    return new Promise(resolve => {
+      setTimeout(() => resolve(true), 800);
+    });
+  }
+}
+
+class BankTransferPayment implements PaymentStrategy {
+  constructor(private accountNumber: string) {}
+  
+  async pay(amount: number): Promise<boolean> {
+    console.log(`Processing bank transfer of $${amount}`);
+    return new Promise(resolve => {
+      setTimeout(() => resolve(true), 1500);
+    });
+  }
+}
+
+class PaymentProcessor {
+  private strategy: PaymentStrategy;
+  
+  constructor(strategy: PaymentStrategy) {
+    this.strategy = strategy;
+  }
+  
+  setStrategy(strategy: PaymentStrategy): void {
+    this.strategy = strategy;
+  }
+  
+  async processPayment(amount: number): Promise<boolean> {
+    return this.strategy.pay(amount);
+  }
+}
+
+// 使用示例
+const processor = new PaymentProcessor(
+  new CreditCardPayment('1234-5678-9012-3456', '123')
+);
+
+processor.processPayment(100);
+
+// 切换策略
+processor.setStrategy(new PayPalPayment('user@example.com'));
+processor.processPayment(50);
+```
+
+## 性能优化和最佳实践
+
+### 类型优化
+
+```typescript
+// 使用 const assertions 优化类型推断
+const colors = ['red', 'green', 'blue'] as const;
+type Color = typeof colors[number]; // 'red' | 'green' | 'blue'
+
+// 使用 satisfies 操作符
+interface Config {
+  apiUrl: string;
+  timeout: number;
+  retries: number;
+}
+
+const config = {
+  apiUrl: 'https://api.example.com',
+  timeout: 5000,
+  retries: 3,
+  // 额外的属性也会被保留
+  debug: true
+} satisfies Config;
+
+// 延迟类型计算
+type LazyType<T> = T extends any ? { [K in keyof T]: T[K] } : never;
+
+// 避免深度递归
+type SafeDeepReadonly<T, Depth extends number = 5> = Depth extends 0
+  ? T
+  : {
+      readonly [P in keyof T]: T[P] extends object
+        ? SafeDeepReadonly<T[P], Prev<Depth>>
+        : T[P];
+    };
+
+type Prev<T extends number> = T extends 5 ? 4
+  : T extends 4 ? 3
+  : T extends 3 ? 2
+  : T extends 2 ? 1
+  : T extends 1 ? 0
+  : never;
+```
+
+### 编译优化
+
+```typescript
+// 使用 import type 优化编译
+import type { User } from './types';
+import { createUser } from './utils';
+
+// 类型断言优化
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+// 使用类型谓词避免重复类型检查
+function processValue(value: unknown) {
+  if (isString(value)) {
+    // TypeScript 知道这里 value 是 string
+    return value.toUpperCase();
+  }
+  return String(value);
+}
+
+// 条件类型优化
+type OptimizedConditional<T> = T extends string
+  ? string
+  : T extends number
+  ? number
+  : T extends boolean
+  ? boolean
+  : unknown;
+```
+
 ## 总结
 
-TypeScript 是一个强大的工具，它通过静态类型检查提高了 JavaScript 代码的可靠性和可维护性。本文档涵盖了 TypeScript 的基础概念、类型系统、面向对象编程、泛型、装饰器、模块系统以及与流行框架的集成等内容。
+TypeScript 是现代前端开发的重要工具，它为 JavaScript 添加了类型系统，提高了代码的可维护性和开发效率。通过掌握 TypeScript 的核心概念和高级特性，可以编写出更加健壮和可扩展的应用程序。
 
-通过学习和应用这些知识，你可以：
+高级 TypeScript 开发需要深入理解类型系统、泛型、条件类型等概念，同时要掌握装饰器、设计模式等高级技巧。通过合理运用这些特性，可以构建出类型安全、性能优良的大型应用程序。
 
-- 编写更健壮、更易于维护的代码
-- 减少运行时错误
-- 提高开发效率
-- 更好地组织和管理大型项目
-
-随着 TypeScript 的不断发展，它已经成为现代 Web 开发的重要工具之一，掌握 TypeScript 将使你在前端开发领域更具竞争力。
+在实际开发中，还需要关注编译性能、类型推断优化、与第三方库的集成等问题，以确保开发体验和最终产品质量。

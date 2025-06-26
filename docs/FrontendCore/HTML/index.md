@@ -718,4 +718,652 @@ HTML5 引入了多种新的输入类型和属性，使表单验证和用户体�
         }
       );
     } else {
-      document.getElementByI
+      document.getElementById("demo").innerHTML = "浏览器不支持地理定位";
+    }
+  }
+</script>
+```
+
+::: warning 地理定位注意事项
+- 需要用户明确授权才能获取位置信息
+- HTTPS 环境下才能正常工作
+- 移动设备上的精度通常比桌面设备更高
+- 考虑隐私保护，不要过度收集位置信息
+:::
+
+### 本地存储
+
+```html
+<script>
+  // localStorage - 持久存储
+  function saveToLocal() {
+    const data = {
+      username: 'jerry',
+      preferences: {
+        theme: 'dark',
+        language: 'zh-CN'
+      }
+    };
+    localStorage.setItem('userData', JSON.stringify(data));
+  }
+
+  function loadFromLocal() {
+    const data = localStorage.getItem('userData');
+    if (data) {
+      const userData = JSON.parse(data);
+      console.log('用户数据:', userData);
+    }
+  }
+
+  // sessionStorage - 会话存储
+  function saveToSession() {
+    sessionStorage.setItem('tempData', '临时数据');
+  }
+
+  function loadFromSession() {
+    const tempData = sessionStorage.getItem('tempData');
+    console.log('临时数据:', tempData);
+  }
+
+  // 监听存储变化
+  window.addEventListener('storage', function(e) {
+    console.log('存储发生变化:', e.key, e.oldValue, e.newValue);
+  });
+
+  // 清理存储
+  function clearStorage() {
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+</script>
+```
+
+### Web Workers
+
+```html
+<!-- 主线程 -->
+<script>
+  // 创建 Web Worker
+  if (typeof(Worker) !== "undefined") {
+    const worker = new Worker('worker.js');
+    
+    // 发送消息给 Worker
+    worker.postMessage({command: 'start', data: [1, 2, 3, 4, 5]});
+    
+    // 接收 Worker 消息
+    worker.onmessage = function(e) {
+      console.log('Worker 返回:', e.data);
+      document.getElementById('result').innerHTML = e.data;
+    };
+    
+    // 处理错误
+    worker.onerror = function(error) {
+      console.error('Worker 错误:', error);
+    };
+    
+    // 终止 Worker
+    // worker.terminate();
+  } else {
+    console.log('浏览器不支持 Web Workers');
+  }
+</script>
+
+<!-- worker.js 文件内容 -->
+<script type="text/plain" id="worker-code">
+  // 监听主线程消息
+  self.onmessage = function(e) {
+    const {command, data} = e.data;
+    
+    if (command === 'start') {
+      // 执行耗时计算
+      let result = 0;
+      for (let i = 0; i < data.length; i++) {
+        result += data[i] * data[i];
+        
+        // 报告进度
+        self.postMessage({
+          type: 'progress',
+          progress: (i + 1) / data.length * 100
+        });
+      }
+      
+      // 返回结果
+      self.postMessage({
+        type: 'result',
+        result: result
+      });
+    }
+  };
+</script>
+```
+
+## 现代 HTML 特性
+
+### Web Components
+
+```html
+<!-- 自定义元素定义 -->
+<script>
+class CustomButton extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    
+    this.shadowRoot.innerHTML = `
+      <style>
+        button {
+          background: var(--primary-color, #007bff);
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        button:hover {
+          opacity: 0.8;
+        }
+      </style>
+      <button><slot></slot></button>
+    `;
+  }
+}
+
+customElements.define('custom-button', CustomButton);
+</script>
+
+<!-- 使用自定义元素 -->
+<custom-button>点击我</custom-button>
+```
+
+### HTML 模板
+
+```html
+<!-- 模板定义 -->
+<template id="user-card-template">
+  <div class="user-card">
+    <img class="avatar" src="" alt="">
+    <h3 class="name"></h3>
+    <p class="email"></p>
+    <button class="follow-btn">关注</button>
+  </div>
+</template>
+
+<script>
+// 使用模板
+function createUserCard(user) {
+  const template = document.getElementById('user-card-template');
+  const clone = template.content.cloneNode(true);
+  
+  clone.querySelector('.avatar').src = user.avatar;
+  clone.querySelector('.name').textContent = user.name;
+  clone.querySelector('.email').textContent = user.email;
+  
+  return clone;
+}
+
+// 创建用户卡片
+const user = { name: 'Jerry', email: 'jerry@example.com', avatar: 'avatar.jpg' };
+const userCard = createUserCard(user);
+document.body.appendChild(userCard);
+</script>
+```
+
+### 现代表单特性
+
+```html
+<!-- 高级表单验证 -->
+<form novalidate>
+  <!-- 自定义验证消息 -->
+  <input 
+    type="email" 
+    required 
+    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+    title="请输入有效的邮箱地址"
+    oninvalid="this.setCustomValidity('邮箱格式不正确')"
+    oninput="this.setCustomValidity('')"
+  >
+  
+  <!-- 数字输入范围 -->
+  <input 
+    type="range" 
+    min="0" 
+    max="100" 
+    step="5" 
+    value="50"
+    oninput="document.getElementById('range-value').textContent = this.value"
+  >
+  <span id="range-value">50</span>
+  
+  <!-- 颜色选择器 -->
+  <input type="color" value="#ff0000">
+  
+  <!-- 日期时间选择 -->
+  <input type="datetime-local" min="2024-01-01T00:00" max="2024-12-31T23:59">
+  
+  <!-- 文件上传增强 -->
+  <input 
+    type="file" 
+    multiple 
+    accept="image/*,.pdf,.doc,.docx"
+    capture="environment"
+  >
+  
+  <!-- 数据列表 -->
+  <input list="browsers" placeholder="选择浏览器">
+  <datalist id="browsers">
+    <option value="Chrome">
+    <option value="Firefox">
+    <option value="Safari">
+    <option value="Edge">
+  </datalist>
+</form>
+```
+
+### 语义化增强
+
+```html
+<!-- 文章结构 -->
+<article>
+  <header>
+    <h1>文章标题</h1>
+    <p>发布于 <time datetime="2024-01-15">2024年1月15日</time></p>
+    <address>作者：<a href="mailto:jerry@example.com">Jerry</a></address>
+  </header>
+  
+  <section>
+    <h2>章节标题</h2>
+    <p>章节内容...</p>
+    
+    <!-- 引用 -->
+    <blockquote cite="https://example.com">
+      <p>这是一段引用文字。</p>
+      <footer>— <cite>引用来源</cite></footer>
+    </blockquote>
+  </section>
+  
+  <aside>
+    <h3>相关链接</h3>
+    <ul>
+      <li><a href="#">相关文章1</a></li>
+      <li><a href="#">相关文章2</a></li>
+    </ul>
+  </aside>
+  
+  <footer>
+    <p>标签：
+      <span class="tag">HTML</span>
+      <span class="tag">前端</span>
+    </p>
+  </footer>
+</article>
+
+<!-- 导航结构 -->
+<nav aria-label="主导航">
+  <ul>
+    <li><a href="/" aria-current="page">首页</a></li>
+    <li><a href="/about">关于</a></li>
+    <li><a href="/contact">联系</a></li>
+  </ul>
+</nav>
+
+<!-- 面包屑导航 -->
+<nav aria-label="面包屑">
+  <ol>
+    <li><a href="/">首页</a></li>
+    <li><a href="/category">分类</a></li>
+    <li aria-current="page">当前页面</li>
+  </ol>
+</nav>
+```
+
+## 无障碍访问 (Accessibility)
+
+### ARIA 属性
+
+```html
+<!-- 角色和状态 -->
+<button 
+  aria-expanded="false" 
+  aria-controls="menu"
+  aria-haspopup="true"
+  onclick="toggleMenu()"
+>
+  菜单
+</button>
+
+<ul id="menu" role="menu" aria-hidden="true">
+  <li role="menuitem"><a href="#">选项1</a></li>
+  <li role="menuitem"><a href="#">选项2</a></li>
+</ul>
+
+<!-- 表单标签关联 -->
+<label for="username">用户名：</label>
+<input 
+  id="username" 
+  type="text" 
+  aria-describedby="username-help"
+  aria-required="true"
+>
+<div id="username-help">请输入3-20个字符</div>
+
+<!-- 错误提示 -->
+<input 
+  type="email" 
+  aria-invalid="true" 
+  aria-describedby="email-error"
+>
+<div id="email-error" role="alert">邮箱格式不正确</div>
+
+<!-- 进度指示器 -->
+<div 
+  role="progressbar" 
+  aria-valuenow="32" 
+  aria-valuemin="0" 
+  aria-valuemax="100"
+  aria-label="文件上传进度"
+>
+  <div style="width: 32%"></div>
+</div>
+
+<!-- 标签页 -->
+<div role="tablist">
+  <button 
+    role="tab" 
+    aria-selected="true" 
+    aria-controls="panel1"
+    id="tab1"
+  >
+    标签1
+  </button>
+  <button 
+    role="tab" 
+    aria-selected="false" 
+    aria-controls="panel2"
+    id="tab2"
+  >
+    标签2
+  </button>
+</div>
+
+<div role="tabpanel" id="panel1" aria-labelledby="tab1">
+  标签1的内容
+</div>
+```
+
+### 键盘导航
+
+```html
+<!-- 跳过链接 -->
+<a href="#main-content" class="skip-link">跳到主内容</a>
+
+<!-- 焦点管理 -->
+<div class="modal" role="dialog" aria-labelledby="modal-title">
+  <h2 id="modal-title">对话框标题</h2>
+  <p>对话框内容</p>
+  <button onclick="closeModal()">关闭</button>
+</div>
+
+<script>
+// 焦点陷阱
+function trapFocus(element) {
+  const focusableElements = element.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+  
+  element.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
+      }
+    }
+  });
+}
+</script>
+```
+
+## 性能优化
+
+### 资源加载优化
+
+```html
+<!-- 预加载关键资源 -->
+<link rel="preload" href="critical.css" as="style">
+<link rel="preload" href="hero-image.jpg" as="image">
+<link rel="preload" href="main.js" as="script">
+
+<!-- 预连接到外部域名 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://api.example.com">
+
+<!-- DNS 预解析 -->
+<link rel="dns-prefetch" href="//cdn.example.com">
+
+<!-- 预获取下一页资源 -->
+<link rel="prefetch" href="/next-page.html">
+<link rel="prefetch" href="/images/next-page-hero.jpg">
+
+<!-- 模块预加载 -->
+<link rel="modulepreload" href="/modules/app.js">
+```
+
+### 图片优化
+
+```html
+<!-- 响应式图片 -->
+<picture>
+  <source 
+    media="(min-width: 800px)" 
+    srcset="large.webp" 
+    type="image/webp"
+  >
+  <source 
+    media="(min-width: 800px)" 
+    srcset="large.jpg"
+  >
+  <source 
+    srcset="small.webp" 
+    type="image/webp"
+  >
+  <img 
+    src="small.jpg" 
+    alt="描述文字"
+    loading="lazy"
+    decoding="async"
+  >
+</picture>
+
+<!-- 高密度屏幕适配 -->
+<img 
+  src="image.jpg" 
+  srcset="image.jpg 1x, image@2x.jpg 2x, image@3x.jpg 3x"
+  alt="描述文字"
+>
+
+<!-- 懒加载 -->
+<img 
+  src="placeholder.jpg" 
+  data-src="actual-image.jpg"
+  loading="lazy"
+  class="lazy-load"
+  alt="描述文字"
+>
+
+<!-- 关键图片优先加载 -->
+<img 
+  src="hero-image.jpg" 
+  fetchpriority="high"
+  alt="英雄图片"
+>
+```
+
+### 脚本优化
+
+```html
+<!-- 异步加载非关键脚本 -->
+<script src="analytics.js" async></script>
+
+<!-- 延迟加载脚本 -->
+<script src="non-critical.js" defer></script>
+
+<!-- 模块化脚本 -->
+<script type="module" src="app.js"></script>
+<script nomodule src="app-legacy.js"></script>
+
+<!-- 内联关键脚本 -->
+<script>
+  // 关键的内联 JavaScript
+  document.documentElement.className = 'js';
+</script>
+```
+
+## 安全性
+
+### 内容安全策略
+
+```html
+<!-- CSP 头部 -->
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+
+<!-- 防止点击劫持 -->
+<meta http-equiv="X-Frame-Options" content="DENY">
+
+<!-- 防止 MIME 类型嗅探 -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+<!-- XSS 保护 -->
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+```
+
+### 表单安全
+
+```html
+<!-- CSRF 保护 -->
+<form method="post" action="/submit">
+  <input type="hidden" name="_token" value="{{ csrf_token }}">
+  
+  <!-- 防止自动填充敏感信息 -->
+  <input type="password" autocomplete="new-password">
+  
+  <!-- 输入验证 -->
+  <input 
+    type="text" 
+    pattern="[A-Za-z0-9]+" 
+    maxlength="50"
+    required
+  >
+</form>
+```
+
+## 最佳实践
+
+### 文档结构
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面标题 - 网站名称</title>
+  
+  <!-- SEO 元数据 -->
+  <meta name="description" content="页面描述，不超过160个字符">
+  <meta name="keywords" content="关键词1,关键词2,关键词3">
+  <meta name="author" content="作者名称">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="页面标题">
+  <meta property="og:description" content="页面描述">
+  <meta property="og:image" content="https://example.com/image.jpg">
+  <meta property="og:url" content="https://example.com/page">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="页面标题">
+  <meta name="twitter:description" content="页面描述">
+  <meta name="twitter:image" content="https://example.com/image.jpg">
+  
+  <!-- 图标 -->
+  <link rel="icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  <!-- 样式表 -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 跳过链接 -->
+  <a href="#main" class="skip-link">跳到主内容</a>
+  
+  <!-- 页头 -->
+  <header role="banner">
+    <nav role="navigation" aria-label="主导航">
+      <!-- 导航内容 -->
+    </nav>
+  </header>
+  
+  <!-- 主内容 -->
+  <main id="main" role="main">
+    <!-- 页面主要内容 -->
+  </main>
+  
+  <!-- 侧边栏 -->
+  <aside role="complementary">
+    <!-- 辅助内容 -->
+  </aside>
+  
+  <!-- 页脚 -->
+  <footer role="contentinfo">
+    <!-- 页脚内容 -->
+  </footer>
+  
+  <!-- 脚本 -->
+  <script src="app.js"></script>
+</body>
+</html>
+```
+
+### 代码规范
+
+```html
+<!-- 良好的代码风格 -->
+<article class="blog-post" data-post-id="123">
+  <header class="blog-post__header">
+    <h1 class="blog-post__title">文章标题</h1>
+    <time class="blog-post__date" datetime="2024-01-15">
+      2024年1月15日
+    </time>
+  </header>
+  
+  <div class="blog-post__content">
+    <p>文章内容段落...</p>
+    
+    <!-- 使用语义化标签 -->
+    <figure class="blog-post__image">
+      <img src="image.jpg" alt="图片描述">
+      <figcaption>图片说明</figcaption>
+    </figure>
+  </div>
+  
+  <footer class="blog-post__footer">
+    <div class="blog-post__tags">
+      <span class="tag">HTML</span>
+      <span class="tag">前端</span>
+    </div>
+  </footer>
+</article>
+```
+
+## 总结
+
+HTML 是 Web 开发的基础，掌握语义化标签、表单处理、多媒体集成等核心概念对于构建现代 Web 应用至关重要。随着 HTML5 的普及，新的 API 和特性为开发者提供了更多可能性。现代 HTML 开发还需要关注无障碍访问、性能优化和安全性等方面，以构建更好的用户体验。

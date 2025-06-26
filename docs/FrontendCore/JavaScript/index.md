@@ -436,3 +436,383 @@ try {
 ```
 
 ### 调试技巧
+
+```javascript
+// 使用 console 方法
+console.log('基本日志信息');
+console.info('信息类日志');
+console.warn('警告信息');
+console.error('错误信息');
+
+// 分组日志
+console.group('用户数据');
+console.log('姓名: Jerry');
+console.log('年龄: 30');
+console.groupEnd();
+
+// 表格形式展示数据
+console.table([{name: 'Jerry', age: 30}, {name: 'Tom', age: 25}]);
+
+// 计时
+console.time('操作耗时');
+// 执行一些操作
+console.timeEnd('操作耗时');
+
+// 断言
+console.assert(1 === 2, '断言失败: 1不等于2');
+
+// 使用 debugger 语句
+function problematicFunction() {
+  let x = 10;
+  debugger; // 浏览器会在此处暂停执行
+  x = x * 2;
+  return x;
+}
+```
+
+::: tip
+在浏览器开发者工具中，可以设置断点、监视变量、单步执行代码，这些都是调试JavaScript代码的有效方法。
+:::
+
+## Web API 与浏览器交互
+
+### Fetch API
+
+```javascript
+// 基本 GET 请求
+fetch('https://api.example.com/data')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+
+// 使用 async/await
+async function fetchData() {
+  try {
+    const response = await fetch('https://api.example.com/data');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// POST 请求
+async function postData(url, data) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+```
+
+### 本地存储
+
+```javascript
+// localStorage - 持久存储
+localStorage.setItem('username', 'Jerry');
+const username = localStorage.getItem('username');
+localStorage.removeItem('username');
+localStorage.clear(); // 清除所有数据
+
+// sessionStorage - 会话存储
+sessionStorage.setItem('sessionData', 'temporary');
+const sessionData = sessionStorage.getItem('sessionData');
+
+// 存储对象
+const user = { name: 'Jerry', age: 30 };
+localStorage.setItem('user', JSON.stringify(user));
+const storedUser = JSON.parse(localStorage.getItem('user'));
+
+// 监听存储变化
+window.addEventListener('storage', (event) => {
+  console.log('Storage changed:', event.key, event.newValue);
+});
+```
+
+### 定时器与动画
+
+```javascript
+// setTimeout - 延迟执行
+const timeoutId = setTimeout(() => {
+  console.log('延迟执行');
+}, 1000);
+
+// 清除定时器
+clearTimeout(timeoutId);
+
+// setInterval - 重复执行
+const intervalId = setInterval(() => {
+  console.log('重复执行');
+}, 1000);
+
+// 清除间隔定时器
+clearInterval(intervalId);
+
+// requestAnimationFrame - 动画帧
+function animate() {
+  // 动画逻辑
+  console.log('动画帧');
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+```
+
+## 现代 JavaScript 特性
+
+### 可选链操作符 (ES2020)
+
+```javascript
+const user = {
+  name: 'Jerry',
+  address: {
+    street: '123 Main St',
+    city: 'New York'
+  }
+};
+
+// 传统方式
+const city = user && user.address && user.address.city;
+
+// 可选链操作符
+const cityNew = user?.address?.city;
+const zipCode = user?.address?.zipCode; // undefined，不会报错
+
+// 方法调用
+user?.getName?.(); // 如果 getName 方法存在则调用
+
+// 数组访问
+const firstItem = user?.items?.[0];
+```
+
+### 空值合并操作符 (ES2020)
+
+```javascript
+// 传统方式
+const name = user.name || 'Default Name';
+
+// 空值合并操作符 - 只有 null 或 undefined 时才使用默认值
+const nameNew = user.name ?? 'Default Name';
+
+// 区别示例
+const value1 = '' || 'default'; // 'default'
+const value2 = '' ?? 'default'; // ''
+
+const value3 = 0 || 'default'; // 'default'
+const value4 = 0 ?? 'default'; // 0
+```
+
+### 动态导入 (ES2020)
+
+```javascript
+// 动态导入模块
+async function loadModule() {
+  try {
+    const module = await import('./myModule.js');
+    module.doSomething();
+  } catch (error) {
+    console.error('模块加载失败:', error);
+  }
+}
+
+// 条件导入
+if (condition) {
+  import('./conditionalModule.js')
+    .then(module => {
+      module.init();
+    });
+}
+```
+
+### BigInt (ES2020)
+
+```javascript
+// 创建 BigInt
+const bigInt1 = 123n;
+const bigInt2 = BigInt(123);
+const bigInt3 = BigInt('123456789012345678901234567890');
+
+// BigInt 运算
+const sum = 123n + 456n; // 579n
+const product = 123n * 456n; // 56088n
+
+// 注意：不能与普通数字混合运算
+// const invalid = 123n + 456; // TypeError
+const valid = 123n + BigInt(456); // 579n
+
+// 比较
+console.log(123n === 123); // false
+console.log(123n == 123); // true
+console.log(123n > 122); // true
+```
+
+## 性能优化技巧
+
+### 防抖和节流
+
+```javascript
+// 防抖 - 延迟执行，如果在延迟期间再次触发，则重新计时
+function debounce(func, delay) {
+  let timeoutId;
+  return function(...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+// 使用防抖
+const debouncedSearch = debounce((query) => {
+  console.log('搜索:', query);
+}, 300);
+
+// 节流 - 限制执行频率
+function throttle(func, delay) {
+  let lastCall = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastCall >= delay) {
+      lastCall = now;
+      func.apply(this, args);
+    }
+  };
+}
+
+// 使用节流
+const throttledScroll = throttle(() => {
+  console.log('滚动事件');
+}, 100);
+
+window.addEventListener('scroll', throttledScroll);
+```
+
+### 内存管理
+
+```javascript
+// 避免内存泄漏
+class Component {
+  constructor() {
+    this.handleResize = this.handleResize.bind(this);
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  handleResize() {
+    console.log('窗口大小改变');
+  }
+
+  destroy() {
+    // 清理事件监听器
+    window.removeEventListener('resize', this.handleResize);
+  }
+}
+
+// 使用 WeakMap 避免内存泄漏
+const privateData = new WeakMap();
+
+class User {
+  constructor(name) {
+    privateData.set(this, { name });
+  }
+
+  getName() {
+    return privateData.get(this).name;
+  }
+}
+```
+
+## 最佳实践
+
+### 代码组织
+
+```javascript
+// 使用模块化
+// userService.js
+export class UserService {
+  static async getUser(id) {
+    const response = await fetch(`/api/users/${id}`);
+    return response.json();
+  }
+
+  static async createUser(userData) {
+    const response = await fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    return response.json();
+  }
+}
+
+// 使用常量
+export const API_ENDPOINTS = {
+  USERS: '/api/users',
+  POSTS: '/api/posts'
+};
+
+export const HTTP_STATUS = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404
+};
+```
+
+### 错误处理策略
+
+```javascript
+// 自定义错误类
+class APIError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.name = 'APIError';
+    this.status = status;
+  }
+}
+
+// 统一错误处理
+async function apiRequest(url, options = {}) {
+  try {
+    const response = await fetch(url, options);
+    
+    if (!response.ok) {
+      throw new APIError(
+        `HTTP error! status: ${response.status}`,
+        response.status
+      );
+    }
+    
+    return await response.json();
+  } catch (error) {
+    if (error instanceof APIError) {
+      console.error('API错误:', error.message, error.status);
+    } else {
+      console.error('网络错误:', error.message);
+    }
+    throw error;
+  }
+}
+```
+
+## 参考资源
+
+- [MDN JavaScript 文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript)
+- [ECMAScript 规范](https://tc39.es/ecma262/)
+- [JavaScript.info](https://javascript.info/)
+- [You Don't Know JS 系列](https://github.com/getify/You-Dont-Know-JS)
+- [Airbnb JavaScript 风格指南](https://github.com/airbnb/javascript)

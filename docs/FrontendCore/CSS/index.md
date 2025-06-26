@@ -1904,3 +1904,637 @@ npm install css-grid-polyfill --save-dev
 - Autoprefixer
 - PostCSS Preset Env
 - Modernizr
+
+## 推荐工具
+
+- **Can I Use**: 检查浏览器兼容性
+- **Autoprefixer**: 自动添加浏览器前缀
+- **PostCSS**: CSS 后处理器
+- **Babel**: JavaScript 转译器（也支持一些 CSS 特性）
+
+## 现代 CSS 特性
+
+### CSS 自定义属性（CSS 变量）
+
+```css
+/* 定义全局变量 */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --font-size-base: 16px;
+  --spacing-unit: 8px;
+  --border-radius: 4px;
+}
+
+/* 使用变量 */
+.button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: calc(var(--spacing-unit) * 2);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+}
+
+/* 局部变量 */
+.card {
+  --card-padding: 20px;
+  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  
+  padding: var(--card-padding);
+  box-shadow: var(--card-shadow);
+}
+
+/* 变量回退值 */
+.element {
+  color: var(--text-color, #333); /* 如果 --text-color 未定义，使用 #333 */
+}
+
+/* 响应式变量 */
+@media (max-width: 768px) {
+  :root {
+    --font-size-base: 14px;
+    --spacing-unit: 6px;
+  }
+}
+```
+
+### CSS Grid 高级布局
+
+```css
+/* 复杂网格布局 */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 
+    "header header header"
+    "sidebar main aside"
+    "footer footer footer";
+  gap: 20px;
+  min-height: 100vh;
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.aside { grid-area: aside; }
+.footer { grid-area: footer; }
+
+/* 网格项目定位 */
+.featured-item {
+  grid-column: 1 / -1; /* 跨越所有列 */
+  grid-row: span 2; /* 跨越两行 */
+}
+
+/* 隐式网格 */
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: 200px;
+  gap: 15px;
+}
+```
+
+### Flexbox 高级技巧
+
+```css
+/* 等高列布局 */
+.equal-height-container {
+  display: flex;
+  align-items: stretch; /* 默认值，使所有项目等高 */
+}
+
+/* 粘性页脚 */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1; /* 占据剩余空间 */
+}
+
+/* 居中布局的多种方式 */
+.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-grid {
+  display: grid;
+  place-items: center;
+}
+
+.center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+```
+
+### 现代选择器
+
+```css
+/* :is() 伪类 - 简化选择器 */
+:is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 0;
+  line-height: 1.2;
+}
+
+/* :where() 伪类 - 零特异性 */
+:where(ul, ol) :where(ul, ol) {
+  margin: 0;
+}
+
+/* :has() 伪类 - 父选择器 */
+.card:has(img) {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.form-group:has(input:invalid) {
+  border-color: red;
+}
+
+/* :not() 伪类的高级用法 */
+button:not(.secondary):not(.outline) {
+  background-color: var(--primary-color);
+}
+
+/* 属性选择器的高级用法 */
+[data-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+}
+
+input[type="email" i] { /* i 表示不区分大小写 */
+  background-image: url('email-icon.svg');
+}
+```
+
+### 容器查询
+
+```css
+/* 定义容器 */
+.card-container {
+  container-type: inline-size;
+  container-name: card;
+}
+
+/* 基于容器大小的样式 */
+@container card (min-width: 400px) {
+  .card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+  }
+  
+  .card-image {
+    width: 150px;
+  }
+}
+
+@container card (max-width: 300px) {
+  .card-title {
+    font-size: 1.2rem;
+  }
+  
+  .card-description {
+    display: none;
+  }
+}
+```
+
+### CSS 函数
+
+```css
+/* clamp() - 响应式字体大小 */
+.responsive-text {
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  /* 最小 1rem，首选 2.5vw，最大 2rem */
+}
+
+/* min() 和 max() */
+.responsive-width {
+  width: min(90%, 1200px); /* 取较小值 */
+  margin: 0 auto;
+}
+
+.min-height-section {
+  min-height: max(400px, 50vh); /* 取较大值 */
+}
+
+/* calc() 的高级用法 */
+.complex-layout {
+  width: calc(100% - 2 * var(--spacing-unit));
+  height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+/* 嵌套 calc() */
+.nested-calc {
+  margin: calc(calc(100% / 3) - 20px);
+}
+```
+
+### 逻辑属性
+
+```css
+/* 传统方式 */
+.traditional {
+  margin-left: 20px;
+  margin-right: 20px;
+  border-left: 1px solid #ccc;
+}
+
+/* 逻辑属性 - 支持不同书写方向 */
+.logical {
+  margin-inline: 20px; /* 等同于 margin-left + margin-right */
+  margin-block: 10px; /* 等同于 margin-top + margin-bottom */
+  border-inline-start: 1px solid #ccc; /* 根据书写方向自动调整 */
+}
+
+/* 更多逻辑属性 */
+.element {
+  padding-inline-start: 15px;
+  padding-inline-end: 15px;
+  border-block-start: 2px solid blue;
+  inset-inline-start: 0; /* 等同于 left: 0 (LTR) 或 right: 0 (RTL) */
+}
+```
+
+## 高级动画技巧
+
+### CSS 动画性能优化
+
+```css
+/* 使用 transform 和 opacity 进行高性能动画 */
+.optimized-animation {
+  /* 启用硬件加速 */
+  will-change: transform;
+  transform: translateZ(0); /* 创建新的合成层 */
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 复杂动画序列 */
+.complex-animation {
+  animation: 
+    fadeIn 0.5s ease-in,
+    slideUp 0.5s 0.2s ease-out,
+    bounce 0.3s 0.7s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); }
+  to { transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+```
+
+### 滚动驱动动画
+
+```css
+/* 滚动进度指示器 */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #3498db 0%, #3498db var(--scroll-progress, 0%), transparent var(--scroll-progress, 0%));
+  z-index: 1000;
+}
+
+/* 视差滚动效果 */
+.parallax-element {
+  transform: translateY(calc(var(--scroll-y) * -0.5px));
+}
+
+/* 滚动触发的淡入效果 */
+.fade-in-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+```
+
+## 实用工具类
+
+### 布局工具类
+
+```css
+/* Flexbox 工具类 */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1; }
+
+/* Grid 工具类 */
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.col-span-2 { grid-column: span 2; }
+.gap-4 { gap: 1rem; }
+
+/* 间距工具类 */
+.m-0 { margin: 0; }
+.m-1 { margin: 0.25rem; }
+.m-2 { margin: 0.5rem; }
+.m-4 { margin: 1rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.p-4 { padding: 1rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+
+/* 文本工具类 */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.font-bold { font-weight: bold; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.leading-tight { line-height: 1.25; }
+
+/* 显示工具类 */
+.hidden { display: none; }
+.block { display: block; }
+.inline { display: inline; }
+.inline-block { display: inline-block; }
+
+/* 位置工具类 */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+.top-0 { top: 0; }
+.right-0 { right: 0; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }
+```
+
+### 响应式工具类
+
+```css
+/* 移动优先的响应式设计 */
+@media (min-width: 640px) {
+  .sm\:block { display: block; }
+  .sm\:hidden { display: none; }
+  .sm\:flex { display: flex; }
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 768px) {
+  .md\:block { display: block; }
+  .md\:hidden { display: none; }
+  .md\:flex { display: flex; }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md\:text-xl { font-size: 1.25rem; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:block { display: block; }
+  .lg\:hidden { display: none; }
+  .lg\:flex { display: flex; }
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .lg\:text-2xl { font-size: 1.5rem; }
+}
+```
+
+## CSS 架构和组织
+
+### BEM 方法论
+
+```css
+/* Block - 独立的组件 */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Element - Block 的子元素 */
+.card__header {
+  padding: 20px 20px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.card__title {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.card__content {
+  padding: 20px;
+}
+
+.card__footer {
+  padding: 0 20px 20px;
+  text-align: right;
+}
+
+/* Modifier - Block 或 Element 的变体 */
+.card--featured {
+  border: 2px solid #3498db;
+}
+
+.card--large {
+  max-width: 800px;
+}
+
+.card__title--small {
+  font-size: 1.2rem;
+}
+
+.card__button--primary {
+  background-color: #3498db;
+  color: white;
+}
+```
+
+### CSS 模块化
+
+```css
+/* _variables.css */
+:root {
+  /* 颜色系统 */
+  --color-primary: #3498db;
+  --color-secondary: #2ecc71;
+  --color-danger: #e74c3c;
+  --color-warning: #f39c12;
+  
+  /* 字体系统 */
+  --font-family-base: 'Inter', sans-serif;
+  --font-family-mono: 'Fira Code', monospace;
+  
+  /* 间距系统 */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  
+  /* 断点 */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+
+/* _mixins.css */
+@define-mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+@define-mixin button-variant $bg-color, $text-color {
+  background-color: $bg-color;
+  color: $text-color;
+  
+  &:hover {
+    background-color: color-mix(in srgb, $bg-color 85%, black);
+  }
+}
+```
+
+## 调试和开发工具
+
+### CSS 调试技巧
+
+```css
+/* 调试边框 - 快速查看元素边界 */
+.debug * {
+  outline: 1px solid red;
+}
+
+/* 网格调试 */
+.debug-grid {
+  background-image: 
+    linear-gradient(rgba(255, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* 响应式调试 - 显示当前断点 */
+.debug-breakpoint::before {
+  content: 'XS';
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+  z-index: 9999;
+}
+
+@media (min-width: 640px) {
+  .debug-breakpoint::before {
+    content: 'SM';
+    background: orange;
+  }
+}
+
+@media (min-width: 768px) {
+  .debug-breakpoint::before {
+    content: 'MD';
+    background: yellow;
+    color: black;
+  }
+}
+
+@media (min-width: 1024px) {
+  .debug-breakpoint::before {
+    content: 'LG';
+    background: green;
+  }
+}
+
+@media (min-width: 1280px) {
+  .debug-breakpoint::before {
+    content: 'XL';
+    background: blue;
+  }
+}
+```
+
+## 性能优化进阶
+
+### 关键渲染路径优化
+
+```css
+/* 内联关键 CSS */
+/* 将首屏必需的 CSS 内联到 HTML 中 */
+
+/* 字体加载优化 */
+@font-face {
+  font-family: 'CustomFont';
+  src: url('font.woff2') format('woff2');
+  font-display: swap; /* 使用系统字体直到自定义字体加载完成 */
+}
+
+/* 图片优化 */
+.optimized-image {
+  /* 使用 object-fit 控制图片显示 */
+  object-fit: cover;
+  object-position: center;
+  
+  /* 懒加载占位符 */
+  background-color: #f0f0f0;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjRjBGMEYwIi8+Cjwvc3ZnPgo=');
+}
+
+/* 減少重排和重绘 */
+.no-layout-thrash {
+  /* 使用 transform 而不是改变 top/left */
+  transform: translateX(100px);
+  
+  /* 使用 opacity 而不是 visibility */
+  opacity: 0;
+  
+  /* 避免复杂的选择器 */
+  /* 不好: .container .item:nth-child(odd) .content > .title */
+  /* 好: .item-title */
+}
+```
