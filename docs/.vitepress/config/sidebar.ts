@@ -188,16 +188,6 @@ export const sidebar = {
         { text: '缓存机制', link: '/ComputerScience/Browser/Cache/index.md' },
         { text: '事件循环', link: '/ComputerScience/Browser/EventLoop/index.md' }
       ]
-    },
-    {
-      text: '设计模式',
-      items: [
-        { text: '创建型模式', link: '/ComputerScience/DesignPattern/Creational/index.md' },
-        { text: '结构型模式', link: '/ComputerScience/DesignPattern/Structural/index.md' },
-        { text: '行为型模式', link: '/ComputerScience/DesignPattern/Behavioral/index.md' },
-        { text: 'MVC/MVP/MVVM', link: '/ComputerScience/DesignPattern/Architecture/index.md' },
-        { text: '函数式编程', link: '/ComputerScience/DesignPattern/Functional/index.md' }
-      ]
     }
   ]
 };
