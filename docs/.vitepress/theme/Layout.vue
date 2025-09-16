@@ -1,5 +1,20 @@
 <template>
   <Layout>
+    <!-- 添加阅读进度条 -->
+    <template #layout-top>
+      <ReadingProgress />
+    </template>
+    
+    <!-- 添加动态背景 -->
+    <template #home-hero-before>
+      <AnimatedBackground />
+    </template>
+    
+    <!-- 添加返回顶部按钮 -->
+    <template #layout-bottom>
+      <BackToTop />
+    </template>
+    
     <template #doc-footer-before> </template>
     <template #doc-after>
       <div style="margin-top: 24px">
